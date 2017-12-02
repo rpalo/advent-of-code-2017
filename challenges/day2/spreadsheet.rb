@@ -13,6 +13,23 @@ class Spreadsheet
     end
   end
 
+  def divisible_sum
+    @rows.reduce(0) do |total, this_row|
+      # Sort and reverse to guarantee the first number is always bigger
+      pairs = this_row.sort.reverse.combination(2)
+
+      pairs.each do |pair|
+        if (pair.first % pair.last).zero?
+          total += pair.first / pair.last
+          break
+        end
+      end
+
+      total
+    end
+  end
+
+  # for convenience/debugging
   def to_s
     @rows.map do |row|
       row.join("  ")

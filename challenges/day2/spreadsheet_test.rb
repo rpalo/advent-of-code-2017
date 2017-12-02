@@ -21,4 +21,23 @@ class TestSpreadsheet < Minitest::Test
     sheet = Spreadsheet.new(cells)
     assert_equal 8, sheet.checksum
   end
+
+  def test_divisible_sum_on_provided_example
+    cells = <<~HEREDOC
+      5 9 2 8
+      9 4 7 3
+      3 8 6 5
+    HEREDOC
+    sheet = Spreadsheet.new(cells)
+    assert_equal 9, sheet.divisible_sum
+  end
+
+  def test_divisible_sum_on_simple_example
+    cells = <<~HEREDOC
+      2 4
+      4 2
+    HEREDOC
+    sheet = Spreadsheet.new(cells)
+    assert_equal 4, sheet.divisible_sum
+  end
 end
