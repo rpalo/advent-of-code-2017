@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 # Test cases for Spreadsheet checksum puzzles on day 2
 require 'minitest/autorun'
 require_relative 'spreadsheet'
 
+# Test cases for Spreadsheet class
 class TestSpreadsheet < Minitest::Test
   def test_checksum_on_provided_example
     cells = <<~HEREDOC

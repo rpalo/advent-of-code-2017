@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 # A sheet of rows and columns of values
 class Spreadsheet
@@ -9,7 +10,7 @@ class Spreadsheet
 
   def checksum
     @rows.reduce(0) do |total, this_row|
-      total += this_row.max - this_row.min
+      total + (this_row.max - this_row.min)
     end
   end
 
@@ -32,12 +33,12 @@ class Spreadsheet
   # for convenience/debugging
   def to_s
     @rows.map do |row|
-      row.join("  ")
+      row.join('  ')
     end.join("\n")
   end
 end
 
-EXAMPLE = <<~HEREDOC
+EXAMPLE_INPUT = <<~HEREDOC
   1 2 3 4 5
   5 4 3 2 1
   1 2 3 4 9
