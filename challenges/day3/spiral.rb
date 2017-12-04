@@ -1,13 +1,14 @@
+# frozen_string_literal: true
+
 # Calculates math for numerical spirals:
 # 5 4 3
 # 6 1 2
 # 7 8 ->
 module Spiral
-
   # Part 2: returns first number bigger than limit while constructing
   # a spiral where each number is the sum of all existing cells
   # around it the time of its creation
-  # NOTE: spiral for this method only gets build cw instead of 
+  # NOTE: spiral for this method only gets build cw instead of
   #       ccw like all the others.  Whoops :)
   def self.cumulative_spiral_number(limit)
     spiral = [
@@ -71,7 +72,7 @@ module Spiral
     top = (left.first - side_length + 1)..left.first
     right = (top.first - side_length + 2)..top.first
     # Right gets one less since it gets shorted.
-    
+
     sides = [bottom, left, top, right]
     sides.find { |side| side.include?(num) }
   end
@@ -79,8 +80,8 @@ module Spiral
   # Adds all current cells surrounding specified index in top row
   # Checks for cells that aren't there and counts them as 0
   def self.add_neighbors(grid, top_row_index)
-    left = top_row_index > 0 ? grid[0][top_row_index - 1] : 0
-    lower_left = top_row_index > 0 ? grid[1][top_row_index - 1] : 0
+    left = top_row_index.positive? ? grid[0][top_row_index - 1] : 0
+    lower_left = top_row_index.positive? ? grid[1][top_row_index - 1] : 0
     lower_middle = grid[1][top_row_index]
     lower_right = grid[1][top_row_index + 1] || 0
 
@@ -99,8 +100,7 @@ module Spiral
     size = grid[0].size
 
     [[0] * (size + 2)] +
-    grid.map { |row| [0] + row + [0] } + 
-    [[0] * (size + 2)]
+      grid.map { |row| [0] + row + [0] } +
+      [[0] * (size + 2)]
   end
-
 end

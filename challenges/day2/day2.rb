@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'spreadsheet'
 
 num_string = ARGF.read

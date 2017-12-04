@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rake/testtask'
 
 desc "Run tests"
@@ -14,10 +16,10 @@ end
 desc "Prints a secret message!"
 task :secret do
   days = FileList['challenges/**/day*.rb'].to_a
-  secret = days.reduce("") do |accum, day|
+  secret = days.reduce([]) do |accum, day|
     accum << File.open(day).to_a.last.delete("#").chomp
   end
-  puts secret.split(".").join("\n")
+  puts secret.join.split(".").join("\n")
 end
 
 task default: [:test]

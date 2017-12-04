@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Part 1 - Sum all the numbers where the next one matches
 def sum_of_matches(nums)
   circular_nums = [nums.last] + nums
@@ -11,10 +13,14 @@ end
 # Part 2 - Sum all the numbers where it matches the one on the other
 #           side of the circle
 def sum_of_halfway_matches(nums)
-  rotated = nums.rotate(nums.length/2)
+  rotated = nums.rotate(nums.length / 2)
   matches = nums.zip(rotated)
   matches.reduce(0) do |total, pair|
-    total += pair.first.to_i if pair.first == pair.last
+    if pair.first == pair.last
+      total + pair.first.to_i
+    else
+      total
+    end
   end
 end
 
