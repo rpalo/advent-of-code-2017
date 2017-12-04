@@ -19,3 +19,5 @@ def sum_of_halfway_matches(nums)
 end
 
 puts sum_of_halfway_matches(ARGF.read.chomp.chars)
+
+#       *.

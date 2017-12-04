@@ -11,3 +11,11 @@ All you need to run the tests is Rake.
 ```bash
 rake
 ```
+
+## Secret Message
+
+For extra fun, because this is for Advent, try:
+
+```bash
+rake secret
+```
