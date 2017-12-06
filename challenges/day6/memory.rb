@@ -8,19 +8,34 @@ class Memory
     @seen = Set.new
   end
 
+  # Part 1:
   def cycles_to_loop
     cycles = 0
     loop do
       cycles += 1
       redistribute
-      if @seen.include?(@banks.join(''))
+      if @seen.include?(@banks.join)
         break
       else
-        @seen << @banks.join('')
+        @seen << @banks.join
       end
     end
     cycles
   end
+
+  # Part 2:
+  def size_of_loop
+    cycles = 0
+    cycles_to_loop  # Sets @banks to loop start state
+    starting_point = @banks.join
+    loop do
+      cycles += 1
+      redistribute
+      break if @banks.join == starting_point
+    end
+    cycles
+  end
+
 
   def redistribute
     starting = index_of_first_max
