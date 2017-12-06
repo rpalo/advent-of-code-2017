@@ -11,3 +11,5 @@ puts "Cycles to loop:", mem.cycles_to_loop
 mem = Memory.new(banks)
 # Part 2:
 puts "Length of loop", mem.size_of_loop
+
+#+
