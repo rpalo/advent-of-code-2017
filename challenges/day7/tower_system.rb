@@ -10,14 +10,40 @@ class TowerSystem
     match_children_and_parents(text)
   end
 
+  # Part 1: Find base tower
   def base
-    @towers.find { |name, tower| tower.parent.nil? }[0]
+    _, result = @towers.find { |name, tower| tower.parent.nil? }
+    result
+  end
+
+  # Part 2: Finds the unbalanced tower and returns the corrected version
+  def corrected_tower
+    current_tower = base
+    current_tower = unbalanced_child(current_tower) until unbalanced_child(current_tower).nil?
+    sibling = current_tower.parent.children.find { |child| child != current_tower }
+    required_sum = sibling.total_weight
+    current_sum = current_tower.total_weight
+    adjustment = current_sum - required_sum
+    Tower.new(
+      current_tower.name,
+      current_tower.weight - (adjustment)
+    )
+  end
+
+  def unbalanced_child(tower)
+    weights = tower.children.group_by { |child| child.total_weight }
+    weird_weight = weights.find { |weight, children| children.size == 1 }
+    return nil unless weird_weight
+    _, children_at_weird_weight = weird_weight
+    children_at_weird_weight.first
   end
 
   def get_towers_from_text(text)
+    tower_regex = /^([a-z]+) \(([0-9]+)\)/
     text.each_line do |line|
-      name = line.split.first
-      @towers[name] = Tower.new(name)
+      results = tower_regex.match(line)
+      name, weight = results.to_a[1..2]
+      @towers[name] = Tower.new(name, weight.to_i)
     end
   end
 
@@ -32,5 +58,9 @@ class TowerSystem
         @towers[parent_value].children << @towers[child_value]
       end
     end
+  end
+
+  def get_by_name(name)
+    @towers[name]
   end
 end
