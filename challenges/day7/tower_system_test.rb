@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require 'minitest/autorun'
-require_relative 'tower'
+require 'minitest/color'
+require_relative 'tower_system'
 
-class TestTower < Minitest::Test
+# Test cases for the Tower System
+class TestTowerSystem < Minitest::Test
   def test_provided_example
     tower_string = <<~HEREDOC
       pbga (66)
@@ -20,7 +22,7 @@ class TestTower < Minitest::Test
       gyxo (61)
       cntj (57)
     HEREDOC
-    towers = Tower.build_from_string(tower_string)
-    assert_equal "tknk", towers[0].base
+    system = TowerSystem.new(tower_string)
+    assert_equal "tknk", system.base
   end
 end
