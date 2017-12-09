@@ -9,3 +9,5 @@ puts "Max register:", reg.max
 
 # Part 2: Max throughout process
 puts "Max during:", reg.max_during
+
+#*

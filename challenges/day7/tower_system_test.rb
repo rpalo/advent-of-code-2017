@@ -7,7 +7,7 @@ require_relative 'tower_system'
 # Test cases for the Tower System
 class TestTowerSystem < Minitest::Test
   def setup
-      tower_string = <<~HEREDOC
+    tower_string = <<~HEREDOC
       pbga (66)
       xhth (57)
       ebii (61)
