@@ -4,6 +4,8 @@ require 'minitest/autorun'
 require_relative 'hexgrid'
 
 class TestHexgrid < Minitest::Test
+
+  # Part 1: Final distance away
   def test_three_steps_away
     last_spot = Hexgrid.final_position(['ne', 'ne', 'ne'])
     assert_equal 3, Hexgrid.distance(last_spot)
@@ -46,5 +48,10 @@ class TestHexgrid < Minitest::Test
     assert_raises ArgumentError do 
       Hexgrid.final_position(moves)
     end
+  end
+
+  # Part 2: Max distance away
+  def test_max_distance_on_return_to_zero
+    assert_equal 2, Hexgrid.max_distance(["ne", "ne", "sw", "sw"])
   end
 end

@@ -2,46 +2,53 @@
 
 module Hexgrid
 
-  Position = Struct.new(:x, :y)
+  Position = Struct.new(:x, :y) do
+    def +(other)
+      Position.new(x + other.x, y + other.y)
+    end
+  end
 
+  def self.step(direction)
+    case direction
+    when "nw"
+      Position.new(-1, 0.5)
+    when "n"
+      Position.new(0, 1)
+    when "ne"
+      Position.new(1, 0.5)
+    when "sw"
+      Position.new(-1, -0.5)
+    when "s"
+      Position.new(0, -1)
+    when "se"
+      Position.new(1, -0.5)
+    else
+      raise ArgumentError, "Can't process move #{step}"
+    end
+  end
+
+  # Part 1: Final distance away
   def self.final_position(steps)
     pos = Position.new(0, 0)
-    steps.each.with_index do |step, ind|
-      case step
-      when "nw"
-        pos.y += 0.5
-        pos.x -= 1
-      when "n"
-        pos.y += 1
-      when "ne"
-        pos.y += 0.5
-        pos.x += 1
-      when "sw"
-        pos.y -= 0.5
-        pos.x -= 1
-      when "s"
-        pos.y -= 1
-      when "se"
-        pos.y -= 0.5
-        pos.x += 1
-      else
-        raise ArgumentError, "Can't process move #{step} at #{ind}"
-      end
-      # puts "Move: #{step}, Pos: #{pos}"
+    steps.each do |dir|
+      pos += step(dir)
     end
     pos
   end
 
   def self.distance(pos)
-    # if pos.y.abs >= pos.x.abs / 2
-    #   (
-    #     pos.x.abs -       # add x steps required
-    #     pos.x.abs / 2 +   # remove .5 x steps
-    #     pos.y.abs         # because they're counted in Y
-    #   ).floor
-    # else
-    #   pos.x.abs
-    # end
     (pos.x.abs + [pos.y.abs - pos.x.abs / 2, 0].max).floor
+  end
+
+  # Part 2: Max distance away
+  def self.max_distance(steps)
+    pos = Position.new(0, 0)
+    max_dist = 0
+    steps.each do |dir|
+      pos += step(dir)
+      this_dist = distance(pos)
+      max_dist = this_dist if this_dist > max_dist
+    end
+    max_dist
   end
 end
