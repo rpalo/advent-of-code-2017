@@ -9,3 +9,5 @@ phrase = ARGF.read.chomp
 stream = Stream.new(phrase)
 puts "Total score", stream.score
 puts "Garbage score", stream.garbage_score
+
+#+.
