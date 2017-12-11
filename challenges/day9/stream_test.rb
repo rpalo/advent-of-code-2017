@@ -4,6 +4,8 @@ require 'minitest/autorun'
 require_relative 'stream'
 
 class TestStream < Minitest::Test
+
+  # Part 1: Score groups
   def test_single_group
     assert_equal 1, Stream.new('{}').score
   end
@@ -34,5 +36,34 @@ class TestStream < Minitest::Test
 
   def test_cancelled_angle_brackets
     assert_equal 3, Stream.new('{{<a!>},{<a!>},{<a!>},{<ab>}}').score
+  end
+
+  # Part 2: Count garbage characters
+  def test_zero_counted
+    assert_equal 0, Stream.new('<>').garbage_score
+  end
+
+  def test_words_counted
+    assert_equal 17, Stream.new('<random characters>').garbage_score
+  end
+
+  def test_brackets_in_garbage_counted
+    assert_equal 3, Stream.new('<<<<>').garbage_score
+  end
+
+  def test_dont_count_cancelled_chars
+    assert_equal 2, Stream.new('<{!>}>').garbage_score
+  end
+
+  def test_dont_count_cancelled_bangs
+    assert_equal 0, Stream.new('<!!>').garbage_score
+  end
+
+  def test_dont_count_lots_of_cancelled_bangs
+    assert_equal 0, Stream.new('<!!>>').garbage_score
+  end
+
+  def test_count_complex_garbage
+    assert_equal 10, Stream.new('<{o"i!a,<{i<a>').garbage_score
   end
 end
