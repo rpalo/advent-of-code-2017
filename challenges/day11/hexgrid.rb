@@ -37,6 +37,12 @@ module Hexgrid
   end
 
   def self.distance(pos)
+    # If Y is bigger than X, then the algorithm is
+    # "Go east/west until you are at the same x as the goal"
+    # "Then go straight north/south."
+    # If X is bigger, then we get the Y travel essentially for
+    # free as we step in X, so we can ignore the y steps.
+    # If that's the case, Y - X/2 will be negative.
     (pos.x.abs + [pos.y.abs - pos.x.abs / 2, 0].max).floor
   end
 
