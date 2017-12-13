@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+require 'minitest/autorun'
+require_relative '<%= cls %>'
+
+# Test cases for <%= proper_cls %>
+class Test<%= proper_cls %> < Minitest::Test
+  def test_simple
+    assert true
+  end
+end
