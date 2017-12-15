@@ -2,6 +2,8 @@
 
 # A layer in a firewall
 class Layer
+  attr_accessor :scanner, :direction
+
   def initialize(depth, range)
     @depth = depth
     @range = range
@@ -15,7 +17,7 @@ class Layer
   end
 
   def caught?
-    @scanner.zero?
+    @scanner.zero? && @range > 0
   end
 
   def tick

@@ -15,16 +15,43 @@ class Firewall
     end
   end
 
+  # Part 1: What is severity with delay = 0
   def packet_severity
-    packet = -1
-    severity = 0
-    while packet < @layers.size
-      packet += 1
-      unless @layers[packet].nil?
-        severity += @layers[packet].severity if @layers[packet].caught?
-      end
-      @layers.each(&:tick)
+    @layers.reduce(0) do |total, layer|
+      result = total + (layer.caught? ? layer.severity : 0)
+      tick
+      result
     end
-    severity
+  end
+
+  # Part 2: What is smallest delay with severity = 0
+  def optimal_delay
+    delay = 0
+    while delay < 10000
+      reset
+      return delay unless caught?(delay)
+      delay += 1
+    end
+    raise "Delay exceeded max bound"
+  end
+
+  def caught?(delay = 0)
+    tick(delay)
+    @layers.any? do |layer|
+      return true if layer.caught?
+      tick
+      false
+    end
+  end
+
+  def tick(count = 1)
+    count.times { @layers.each(&:tick) }
+  end
+
+  def reset
+    @layers.each do |layer|
+      layer.scanner = 0
+      layer.direction = -1
+    end
   end
 end
