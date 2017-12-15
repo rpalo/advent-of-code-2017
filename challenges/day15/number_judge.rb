@@ -12,12 +12,14 @@ class NumberJudge
     num.to_s(2).rjust(16, '0')[-16..-1]
   end
 
-  def score
+  def score(picky = false)
     total = 0
     @reps.times do |i|
-      target = lowest_bits(@gens.first.next, 16)
+      first_num = picky ? @gens.first.picky_next : @gens.first.next
+      target = lowest_bits(first_num, 16)
       total += 1 if @gens.drop(1).all? do |gen|
-        lowest_bits(gen.next, 16) == target
+        comp = picky ? gen.picky_next : gen.next
+        lowest_bits(comp, 16) == target
       end
       puts "#{i} reps complete" if (i % 10000).zero?
     end

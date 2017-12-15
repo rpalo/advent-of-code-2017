@@ -7,13 +7,19 @@ require_relative 'number_judge'
 # Test cases for Number Judge
 class TestNumberJudge < Minitest::Test
   def setup
-    @a = NumberGenerator.new(65, 16_807)
-    @b = NumberGenerator.new(8921, 48_271)
+    @a = NumberGenerator.new(65, 16_807, 4)
+    @b = NumberGenerator.new(8921, 48_271, 8)
   end
 
   def test_part_1
+    skip
     j = NumberJudge.new(40_000_000, [@a, @b])
     assert_equal 588, j.score
+  end
+
+  def test_part_2
+    j = NumberJudge.new(5_000_000, [@a, @b])
+    assert_equal 309, j.score(picky = true)
   end
 
   def test_lowest_bits
