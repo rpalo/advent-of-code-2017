@@ -29,7 +29,7 @@ end
 desc "Runs the specified script against input.txt"
 task :run, [:day] do |t, args|
   day = args[:day]
-  ruby "challenges/day#{day}/day#{day}.rb challenges/input.txt"
+  ruby "challenges/day#{day}.rb challenges/input.txt"
 end
 
 desc "Generates a new task from template"
@@ -47,10 +47,14 @@ task :new, [:day, :cls] do |t, args|
   cls_out = ERB.new(cls_template).result(binding)
   cls_test_out = ERB.new(cls_test_template).result(binding)
 
-  Dir.mkdir "challenges/day#{day}"
-  File.open("challenges/day#{day}/day#{day}.rb", 'w') { |f| f.puts day_out }
-  File.open("challenges/day#{day}/#{cls}.rb", 'w') { |f| f.puts cls_out }
-  File.open("challenges/day#{day}/#{cls}_test.rb", 'w') { |f| f.puts cls_test_out }
+  puts " + Creating day#{day}.rb in challenges folder..."
+  File.open("challenges/day#{day}.rb", 'w') { |f| f.puts day_out }
+  puts " + Creating #{cls}.rb in lib folder..."
+  File.open("lib/#{cls}.rb", 'w') { |f| f.puts cls_out }
+  puts " + Creating #{cls}_test.rb in test folder..."
+  File.open("test/#{cls}_test.rb", 'w') { |f| f.puts cls_test_out }
+  puts "====="
+  puts "Day #{day} files generated!"
 end
 
 task default: [:test]
