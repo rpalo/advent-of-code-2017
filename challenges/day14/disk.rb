@@ -11,15 +11,17 @@ class Disk
     (0...GRID_SIZE).each do |r|
       row_string = "#{phrase}-#{r}"
       hex = KnotHash.new.hash(row_string)
-      bin = hex.scan(/../).map do |pair|
-        pair.hex.to_s(2).rjust(2, '0')
-      end
-        .join
+      bin = hex
+            .hex
+            .to_s(2)
+            .rjust(128, '0')
+            .chars
+            .map(&:to_i)
       @rows << bin
     end
   end
 
   def used
-    @rows.reduce(0) { |total, row| total + row.chars.map(&:to_i).sum }
+    @rows.reduce(0) { |total, row| total + row.sum }
   end
 end
