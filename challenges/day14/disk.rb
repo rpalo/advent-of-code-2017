@@ -32,27 +32,21 @@ class Disk
     padded.each.with_index do |row, i|
       row.each.with_index do |col, j|
         next if col.zero?
-        if padded[i - 1][j] == 1 && padded[i][j - 1] == 1
-          address_up = index_that_contains(groups, "#{i - 1}-#{j}")
-          address_left = index_that_contains(groups, "#{i}-#{j - 1}")
-          groups << groups[address_up] + groups[address_left] + ["#{i}-#{j}"]
-          groups.select!.with_index { |item, index| index != address_up && index != address_left }
-        elsif padded[i - 1][j] == 1
-          address = index_that_contains(groups, "#{i - 1}-#{j}")
-          groups[address] << "#{i}-#{j}"
-        elsif padded[i][j - 1] == 1
-          address = index_that_contains(groups, "#{i}-#{j - 1}")
-          groups[address] << "#{i}-#{j}"
+        up = groups.find { |group| group.include?("#{i - 1}-#{j}") }
+        left = groups.find { |group| group.include?("#{i}-#{j - 1}") }
+        if up && left
+          groups << up + left + ["#{i}-#{j}"]
+          groups.delete(up)
+          groups.delete(left)
+        elsif up
+          up << "#{i}-#{j}"
+        elsif left
+          left << "#{i}-#{j}"
         else
           groups << Set.new(["#{i}-#{j}"])
         end
       end
     end
-    # puts "\n" + padded.map { |row| row.first(30).join(", ") }.join("\n")
     groups.size
-  end
-
-  def index_that_contains(groups, item)
-    groups.index { |group| group.include?(item) }
   end
 end
