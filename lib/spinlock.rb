@@ -10,16 +10,17 @@ class Spinlock
   end
 
   def spin(step_size, step_qty)
-    step_qty.times do
+    step_qty.times do |i|
       step(step_size)
       @elements.insert(@current + 1, @next_insert)
-      @current += 1
       @next_insert += 1
+      step(1)
+      puts "#{i} complete" if i % 1000 == 0
     end
   end
 
   def step(step_size)
-    @current = (@current + step_size) % @elements.size
+    @current = (@current + step_size) % @next_insert
   end
 
   def [](ind)
