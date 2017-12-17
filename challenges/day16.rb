@@ -33,3 +33,5 @@ results << letters
   results << letters
 end
 puts "After 1,000,000,000 times ;) : #{letters}"
+
+#*.
