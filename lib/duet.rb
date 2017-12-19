@@ -1,64 +1,29 @@
 # frozen_string_literal: true
 
+require_relative 'solo'
+
 # Music making class
 class Duet
-  def initialize
-    @registers = Hash.new(0)
-    @last_send = nil
-    @current = 0
+  attr_reader :solos
+  
+  def initialize(instructions)
+    @solos = [
+      Solo.new(0),
+      Solo.new(1),
+    ]
+    @instructions = instructions
   end
 
-  def read_to_recover(instructions)
-    lines = instructions.lines.map(&:split)
-    while @current >= 0 && @current < lines.size
-      command, reg, value = lines[@current]
-      value = if /[a-z]+/.match?(value)
-                @registers[value]
-              else
-                value.to_i
-              end
-      result = send(command, reg, value.to_i)
-
-      return result if command == "rcv" && result
-
-      @current += 1 unless command == "jgz" && result
+  def count_communications(id)
+    until @solos.all?(&:waiting)
+      # p self
+      active = @solos.find { |solo| !solo.waiting }
+      result_state = active.read(@instructions)
+      next unless result_state.status == :send
+      @solos.reject { |solo| solo == active }.each do |solo|
+        solo.enqueue(result_state.value)
+      end
     end
-  end
-
-  def set(reg, value)
-    @registers[reg] = value
-    nil
-  end
-
-  def add(reg, value)
-    @registers[reg] += value
-    nil
-  end
-
-  def mul(reg, value)
-    @registers[reg] *= value
-    nil
-  end
-
-  def mod(reg, value)
-    @registers[reg] %= value
-    nil
-  end
-
-  def snd(reg, *_rest)
-    @last_send = @registers[reg]
-    nil
-  end
-
-  def rcv(reg, *_rest)
-    @registers[reg].positive? ? @last_send : nil
-  end
-
-  def jgz(reg, step_size)
-    @current += step_size if @registers[reg].positive?
-  end
-
-  def [](item)
-    @registers[item]
+    @solos[id].sent
   end
 end
