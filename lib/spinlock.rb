@@ -15,7 +15,6 @@ class Spinlock
       @elements.insert(@current + 1, @next_insert)
       @next_insert += 1
       step(1)
-      puts "#{i} complete" if i % 1000 == 0
     end
   end
 
