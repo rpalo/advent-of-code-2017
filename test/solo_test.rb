@@ -77,6 +77,11 @@ class TestSolo < Minitest::Test
     assert_equal 3, @s.current
   end
 
+  def test_jump_moves_when_numerical_reg
+    @s.jgz(3, 3)
+    assert_equal 3, @s.current
+  end
+
   def test_jump_does_nothing_when_negative_reg
     @s.set("a", -5)
     @s.jgz("a", 3)

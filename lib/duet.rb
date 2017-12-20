@@ -2,10 +2,10 @@
 
 require_relative 'solo'
 
-# Music making class
+# Manages two Solos.  Written to extend to more solos.
 class Duet
   attr_reader :solos
-  
+
   def initialize(instructions)
     @solos = [
       Solo.new(0),
@@ -16,10 +16,10 @@ class Duet
 
   def count_communications(id)
     until @solos.all?(&:waiting)
-      # p self
       active = @solos.find { |solo| !solo.waiting }
       result_state = active.read(@instructions)
       next unless result_state.status == :send
+
       @solos.reject { |solo| solo == active }.each do |solo|
         solo.enqueue(result_state.value)
       end

@@ -19,13 +19,8 @@ class Solo
   def read(instructions)
     lines = instructions.lines.map(&:split)
     while (0...lines.size).include?(@current)
-      command, reg, value = lines[@current]
-      value = if /[a-z]+/.match?(value)
-                @registers[value]
-              else
-                value.to_i
-              end
-      state = send(command, reg, value)
+      command, arg1, arg2 = lines[@current]
+      state = send(command, arg1, arg2)
       @current += 1 unless [:jump, :receive].include?(state.status)
       return state if [:send, :receive].include?(state.status)
     end
@@ -33,37 +28,38 @@ class Solo
     State.new(nil, :continue)
   end
 
-  def set(reg, value)
+  def set(arg1, arg2)
+    reg, value = allow_inputs([arg1, arg2], [:register, :either])
     @registers[reg] = value
     State.new(nil, :continue)
   end
 
-  def add(reg, value)
+  def add(arg1, arg2)
+    reg, value = allow_inputs([arg1, arg2], [:register, :either])
     @registers[reg] += value
     State.new(nil, :continue)
   end
 
-  def mul(reg, value)
+  def mul(arg1, arg2)
+    reg, value = allow_inputs([arg1, arg2], [:register, :either])
     @registers[reg] *= value
     State.new(nil, :continue)
   end
 
-  def mod(reg, value)
+  def mod(arg1, arg2)
+    reg, value = allow_inputs([arg1, arg2], [:register, :either])
     @registers[reg] %= value
     State.new(nil, :continue)
   end
 
-  def snd(reg, *_rest)
+  def snd(arg1, arg2 = nil)
+    value, _ = allow_inputs([arg1, arg2], [:either, :none])
     @sent += 1
-    if /[a-z]+/.match?(reg)
-      retval = @registers[reg]
-    else
-      retval = reg.to_i
-    end
-    State.new(retval, :send)
+    State.new(value, :send)
   end
 
-  def rcv(reg, *_rest)
+  def rcv(arg1, arg2 = nil)
+    reg, _ = allow_inputs([arg1, arg2], [:register, :none])
     if @queue.empty?
       @waiting = true
       State.new(nil, :receive)
@@ -74,13 +70,9 @@ class Solo
     end
   end
 
-  def jgz(reg, step_size)
-    if /[a-z]+/.match?(reg)
-      item = @registers[reg]
-    else
-      item = reg.to_i
-    end
-    if item.positive?
+  def jgz(arg1, arg2)
+    value, step_size = allow_inputs([arg1, arg2], [:either, :either])
+    if value.positive?
       @current += step_size
       State.new(nil, :jump)
     else
@@ -91,6 +83,27 @@ class Solo
   def enqueue(value)
     @queue << value
     @waiting = false
+  end
+
+  def allow_inputs(arguments, possibles)
+    arguments.zip(possibles).map do |arg, type|
+      case type
+      when :register
+        arg
+      when :number
+        arg.to_i
+      when :either
+        if /[a-z]+/.match?(arg.to_s)
+          @registers[arg]
+        else
+          arg.to_i
+        end
+      when :none
+        nil
+      else
+        raise "Argument acceptance type #{type} not recognized"
+      end
+    end
   end
 
   def [](item)

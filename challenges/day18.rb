@@ -8,5 +8,6 @@ require_relative '../lib/duet'
 
 instructions = ARGF.read.chomp
 d = Duet.new(instructions)
-# puts "First value to be recovered: #{d.read_to_recover(instructions)}"
 puts "Number of sends by #1: #{d.count_communications(1)}"
+
+#E
