@@ -6,3 +6,6 @@ packet_map = ARGF.read.chomp
 packet = Packet.new
 packet.travel(packet_map)
 puts "Saw the letters #{packet.history.join}"
+puts "Took #{packet.steps} steps"
+
+#R

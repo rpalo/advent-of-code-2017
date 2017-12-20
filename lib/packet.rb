@@ -2,7 +2,7 @@
 
 # A packet that travels through pipes
 class Packet
-  attr_reader :history
+  attr_reader :history, :steps
 
   Position = Struct.new(:row, :col) do
     def +(other)
@@ -20,6 +20,7 @@ class Packet
     @direction = SOUTH
     @history = []
     @position = Position.new(0, 0)
+    @steps = 1
   end
 
   def travel(packet_map)
@@ -69,6 +70,7 @@ class Packet
   end
 
   def move(position)
+    @steps += 1
     @position += position
   end
 end
