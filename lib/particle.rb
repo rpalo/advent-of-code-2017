@@ -2,7 +2,7 @@
 
 # x, y, z particle that respond to kinematics
 class Particle
-  attr_reader :id
+  attr_reader :id, :position
 
   Vector = Struct.new(:x, :y, :z) do
     def +(other)

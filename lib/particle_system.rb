@@ -17,4 +17,19 @@ class ParticleSystem
        .manhattan_distance
     end.first
   end
+
+  def remaining_after_collisions
+    remaining = @particles.dup
+    1000.times do
+      remaining.each(&:update)
+      histogram = remaining
+                  .group_by(&:position)
+      remaining = histogram.reduce([]) do |running, group|
+        _position, particles = group
+        particles.size == 1 ? running + particles : running
+      end
+      break if remaining.size == 1
+    end
+    remaining
+  end
 end
