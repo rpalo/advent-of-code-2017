@@ -12,7 +12,6 @@ class TestParticleSystem < Minitest::Test
     HEREDOC
     sys = ParticleSystem.new(particles)
     closest = sys.closest_eventually
-    p closest
     assert_equal 1, closest.id
   end
 
