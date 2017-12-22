@@ -6,3 +6,5 @@ grid = ARGF.read.chomp
 vi = Virus.new(grid)
 vi.cycle(10_000_000)
 puts "After 10k cycles, infected #{vi.infections} times"
+
+# X
