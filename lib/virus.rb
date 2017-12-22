@@ -9,6 +9,10 @@ class Virus
     def +(other)
       Point.new(row + other.row, col + other.col)
     end
+    
+    def *(const)
+      Point.new(row * const, col * const)
+    end
   end
 
   NORTH = Point.new(-1, 0)
@@ -28,13 +32,19 @@ class Virus
 
   def cycle(count)
     count.times do
-      if infected?
+      case current_node
+      when "#"
         turn_right
+        flag!
+      when "F"
+        turn_around
         clean!
-      else
-        turn_left
+      when "W"
         infect!
         @infections += 1
+      when "."
+        turn_left
+        weaken!
       end
       move_forward
       pad_healthy(5) if off_grid?
@@ -42,6 +52,10 @@ class Virus
   end
 
   private
+
+  def current_node
+    @grid[@current.row][@current.col]
+  end
 
   def infected?
     @grid[@current.row][@current.col] == "#"
@@ -55,12 +69,24 @@ class Virus
     @facing = DIRECTIONS[(DIRECTIONS.index(@facing) - 1) % DIRECTIONS.size]
   end
 
+  def turn_around
+    @facing *= -1
+  end
+
   def move_forward
     @current += @facing
   end
 
   def clean!
     @grid[@current.row][@current.col] = "."
+  end
+
+  def weaken!
+    @grid[@current.row][@current.col] = "W"
+  end
+
+  def flag!
+    @grid[@current.row][@current.col] = "F"
   end
 
   def infect!
