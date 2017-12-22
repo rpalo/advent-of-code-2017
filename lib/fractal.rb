@@ -2,14 +2,9 @@
 
 # Self-replicating fractal art pattern
 class Fractal
-  def initialize(start_pattern, rules)
+  def initialize(start_pattern, rule_text)
     @grid = gridify(start_pattern, "\n")
-    initial_rules = rules.lines.map do |line|
-      start, finish = line.scan(/[\.#\/]+/)
-      start_rule = gridify(start, "/")
-      finish_rule = gridify(finish, "/")
-      [start_rule.freeze, finish_rule.freeze]
-    end.to_h
+    initial_rules = rules_from_text(rule_text)
     @rules = flip_and_spin(initial_rules)
   end
 
@@ -25,23 +20,48 @@ class Fractal
     end
   end
 
-  def subdivide(grid, size)
+  def on
+    @grid.flatten.count("#")
+  end
+
+  private
+
+  def rules_from_text(text)
+    text.lines.map do |line|
+      start, finish = line.scan(/[\.#\/]+/)
+      start_rule = gridify(start, "/")
+      finish_rule = gridify(finish, "/")
+      [start_rule.freeze, finish_rule.freeze]
+    end.to_h
+  end
+
+  def gridify(phrase, line_sep)
+    phrase.split(line_sep).map(&:chars)
+  end
+
+  def subdivide(grid, block_size)
     result = []
-    blocks_per_side = grid.size / size
-    blocks_per_side.times do |row|
-      blocks_per_side.times do |col|
-        this_block = []
-        size.times do |row_offset|
-          this_block << grid[size * row + row_offset][size * col, size]
-        end
-        result << this_block
+    blocks_per_side = grid.size / block_size
+    blocks_per_side.times do |row_start|
+      blocks_per_side.times do |col_start|
+        result << get_block(grid, row_start, col_start, block_size)
       end
     end
     [result, blocks_per_side]
   end
 
+  def get_block(grid, row_start, col_start, block_size)
+    this_block = []
+    block_size.times do |row|
+      this_block << grid[
+        block_size * row_start + row][
+        block_size * col_start, block_size]
+    end
+    this_block
+  end
+
   def join_grid(blocks, blocks_per_side)
-    size = blocks[0].size
+    size = blocks.first.size
     gridsize = size * blocks_per_side
     result = Array.new(gridsize) { Array.new(gridsize, nil) }
     blocks.each.with_index do |block, ind|
@@ -60,20 +80,21 @@ class Fractal
   def flip_and_spin(initial)
     results = {}
     initial.each do |in_rule, out_rule|
-      this_one = in_rule
-      results[this_one] = out_rule
-      3.times do
-        this_one = rotate_ccw(this_one)
-        results[this_one] = out_rule
-      end
-      this_one = flip(this_one)
-      results[this_one] = out_rule
-      3.times do
-        this_one = rotate_ccw(this_one)
-        results[this_one] = out_rule
-      end
+      all_orientations = four_orientations(in_rule) +
+                         four_orientations(flip(in_rule))
+      all_orientations.each { |rule| results[rule] = out_rule }
     end
     results
+  end
+
+  def four_orientations(grid)
+    current_grid = grid
+    result = [current_grid]
+    3.times do
+      current_grid = rotate_ccw(current_grid)
+      result << current_grid
+    end
+    result
   end
 
   def rotate_ccw(grid)
@@ -83,13 +104,5 @@ class Fractal
 
   def flip(grid)
     grid.map(&:reverse).freeze
-  end
-
-  def gridify(phrase, line_sep)
-    phrase.split(line_sep).map(&:chars)
-  end
-
-  def on
-    @grid.flatten.count("#")
   end
 end
