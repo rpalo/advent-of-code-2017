@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
+require 'prime'
+
 # Simpler variant on the Duet processor
 class Coprocessor
-  attr_reader :registers, :calls
+  attr_reader :calls
+  attr_accessor :registers
 
   def initialize
     @registers = Hash.new(0)
@@ -18,6 +21,22 @@ class Coprocessor
       result = send(command, arg1, arg2)
       @current += 1 if result
     end
+  end
+
+  def optimize_for_h
+    b = (81 * 100) + 100_000
+    c = b + 17_000
+    loop do
+      @registers["h"] += 1 unless Prime.prime?(b)
+      break if b == c
+      b += 17
+    end
+  end
+
+  def reset
+    @registers = Hash.new(0)
+    @calls = Hash.new(0)
+    @current = 0
   end
 
   def set(reg, val_or_reg)
@@ -44,11 +63,11 @@ class Coprocessor
   def jnz(val_or_reg, jump_size)
     @calls[:jnz] += 1
     test_val = get_val(val_or_reg)
-    unless test_val.zero?
+    if test_val.zero?
+      true
+    else
       @current += jump_size.to_i
       false
-    else
-      true
     end
   end
 
