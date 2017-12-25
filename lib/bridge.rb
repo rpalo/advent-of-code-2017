@@ -33,10 +33,21 @@ class Bridge
     bridges
   end
 
-  def strongest_score
-    bridge_scores = @bridges.map do |bridge|
+  def strongest_score(bridges = @bridges)
+    bridge_scores = bridges.map do |bridge|
       bridge.reduce(0) { |total, conn| total + conn.ports.sum }
     end
     bridge_scores.max
+  end
+
+  def longest_bridges
+    lengths = @bridges.map(&:size)
+    longest = lengths.max
+    @bridges.select { |bridge| bridge.size == longest }
+  end
+
+  def longest_strongest
+    longest = longest_bridges
+    strongest_score(longest)
   end
 end
